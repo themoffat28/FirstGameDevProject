@@ -19,13 +19,7 @@ namespace FirstGameDevProject.Model
 		}
 
 		// Position of the Player relative to the upper left side of the screen
-		private Vector2 position;
-		public Vector2 Position
-		{
-			get { return position; }
-			set { position = value; }
-		}
-
+		public Vector2 Position;
 
 		// State of the player
 		private bool active;
