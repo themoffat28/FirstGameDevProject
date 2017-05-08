@@ -1,5 +1,6 @@
 ﻿using System;
-
+using System.Collections.Generic;
+            
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -33,6 +34,17 @@ namespace FirstGameDevProject.Controller
 		ParallaxingBackground bgLayer1;
 		ParallaxingBackground bgLayer2;
 
+		// Enemies
+		Texture2D enemyTexture;
+		List<Enemy> enemies;
+
+		// The rate at which the enemies appear
+		TimeSpan enemySpawnTime;
+		TimeSpan previousSpawnTime;
+
+		// A random number generator
+		Random random;
+
 
 		public Game1 ()
 		{
@@ -56,6 +68,18 @@ namespace FirstGameDevProject.Controller
 
 			bgLayer1 = new ParallaxingBackground();
 			bgLayer2 = new ParallaxingBackground();
+
+			// Initialize the enemies list
+			enemies = new List<Enemy>();
+
+			// Set the time keepers to zero
+			previousSpawnTime = TimeSpan.Zero;
+
+			// Used to determine how fast enemy respawns
+			enemySpawnTime = TimeSpan.FromSeconds(1.0f);
+
+			// Initialize our random number generator
+			random = new Random();
 
 			base.Initialize();
 		}
@@ -85,6 +109,8 @@ namespace FirstGameDevProject.Controller
 			bgLayer1.Initialize(Content, "Texture/bgLayer1", GraphicsDevice.Viewport.Width, -1);
 			bgLayer2.Initialize(Content, "Texture/bgLayer2", GraphicsDevice.Viewport.Width, -2);
 
+			enemyTexture = Content.Load<Texture2D>("mineAnimation");
+
 			mainBackground = Content.Load<Texture2D>("Texture/mainbackground");
 
 		}
@@ -113,17 +139,20 @@ namespace FirstGameDevProject.Controller
 			currentKeyboardState = Keyboard.GetState();
 			currentGamePadState = GamePad.GetState(PlayerIndex.One);
 
-
-			player.Update(gameTime);
+			//Update the player
+			UpdatePlayer(gameTime);
 
 			// Update the parallaxing background
 			bgLayer1.Update();
 			bgLayer2.Update();
+
+			// Update the enemies
+			UpdateEnemies(gameTime);
 		}
 
 		private void UpdatePlayer (GameTime gameTime)
 		{
-
+			player.Update(gameTime);
 			// Get Thumbstick Controls
 			player.Position.X += currentGamePadState.ThumbSticks.Left.X * playerMoveSpeed;
 			player.Position.Y -= currentGamePadState.ThumbSticks.Left.Y * playerMoveSpeed;
@@ -155,6 +184,51 @@ namespace FirstGameDevProject.Controller
 			player.Position.Y = MathHelper.Clamp(player.Position.Y, 0, GraphicsDevice.Viewport.Height - player.Height);
 		}
 
+		private void AddEnemy ()
+		{
+			// Create the animation object
+			Animation enemyAnimation = new Animation();
+
+			// Initialize the animation with the correct animation information
+			enemyAnimation.Initialize(enemyTexture, Vector2.Zero, 47, 61, 8, 30, Color.White, 1f, true);
+
+			// Randomly generate the position of the enemy
+			Vector2 position = new Vector2(GraphicsDevice.Viewport.Width + enemyTexture.Width / 2, random.Next(100, GraphicsDevice.Viewport.Height - 100));
+
+			// Create an enemy
+			Enemy enemy = new Enemy();
+
+			// Initialize the enemy
+			enemy.Initialize(enemyAnimation, position);
+
+			// Add the enemy to the active enemies list
+			enemies.Add(enemy);
+		}
+
+		private void UpdateEnemies (GameTime gameTime)
+		{
+			// Spawn a new enemy enemy every 1.5 seconds
+			if (gameTime.TotalGameTime - previousSpawnTime > enemySpawnTime)
+			{
+				previousSpawnTime = gameTime.TotalGameTime;
+
+				// Add an Enemy
+				AddEnemy();
+			}
+
+			// Update the Enemies
+			for (int i = enemies.Count - 1; i >= 0; i--)
+			{
+				enemies[i].Update(gameTime);
+
+				if (enemies[i].Active == false)
+				{
+					enemies.RemoveAt(i);
+				}
+
+			}
+		}
+
 		/// <summary>
 		/// This is called when the game should draw itself.
 		/// </summary>
@@ -162,10 +236,6 @@ namespace FirstGameDevProject.Controller
 		protected override void Draw (GameTime gameTime)
 		{
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
-
-			//TODO: Add your drawing code here
-
-			base.Draw(gameTime);
 
 			// Start drawing
 			spriteBatch.Begin();
@@ -176,11 +246,19 @@ namespace FirstGameDevProject.Controller
 			bgLayer1.Draw(spriteBatch);
 			bgLayer2.Draw(spriteBatch);
 
+			// Draw the Enemies
+			for (int i = 0; i < enemies.Count; i++)
+			{
+				enemies[i].Draw(spriteBatch);
+			}
+
 			// Draw the Player
 			player.Draw(spriteBatch);
 
 			// Stop drawing
 			spriteBatch.End();
+
+			base.Draw(gameTime);
 		}
 	}
 }
