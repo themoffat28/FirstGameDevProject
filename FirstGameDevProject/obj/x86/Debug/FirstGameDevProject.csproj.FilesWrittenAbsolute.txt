@@ -32,3 +32,9 @@
 /Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Texture/mainbackground.xnb
 /Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Texture/mine.xnb
 /Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Texture/player.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/explosion.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/mineAnimation.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/shipAnimation.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Animation/explosion.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Animation/mineAnimation.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Animation/shipAnimation.xnb

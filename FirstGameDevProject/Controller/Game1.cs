@@ -26,6 +26,13 @@ namespace FirstGameDevProject.Controller
 
 		// A movement speed for the player
 		private float playerMoveSpeed;
+		// Image used to display the static background
+		Texture2D mainBackground;
+
+		// Parallaxing Layers
+		ParallaxingBackground bgLayer1;
+		ParallaxingBackground bgLayer2;
+
 
 		public Game1 ()
 		{
@@ -47,6 +54,9 @@ namespace FirstGameDevProject.Controller
 			// Set a constant player move speed
 			playerMoveSpeed = 8.0f;
 
+			bgLayer1 = new ParallaxingBackground();
+			bgLayer2 = new ParallaxingBackground();
+
 			base.Initialize();
 		}
 
@@ -62,8 +72,20 @@ namespace FirstGameDevProject.Controller
 			//TODO: use this.Content to load your game content here
 
 			// Load the player resources 
-			Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
-			player.Initialize(Content.Load<Texture2D>("Texture/player"), playerPosition);
+			// Load the player resources
+			Animation playerAnimation = new Animation();
+			Texture2D playerTexture = Content.Load<Texture2D>("Animation/shipAnimation");
+			playerAnimation.Initialize(playerTexture, Vector2.Zero, 115, 69, 8, 30, Color.White, 1f, true);
+
+			Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y
+			+ GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+			player.Initialize(playerAnimation, playerPosition);
+
+			// Load the parallaxing background
+			bgLayer1.Initialize(Content, "Texture/bgLayer1", GraphicsDevice.Viewport.Width, -1);
+			bgLayer2.Initialize(Content, "Texture/bgLayer2", GraphicsDevice.Viewport.Width, -2);
+
+			mainBackground = Content.Load<Texture2D>("Texture/mainbackground");
 
 		}
 
@@ -92,10 +114,11 @@ namespace FirstGameDevProject.Controller
 			currentGamePadState = GamePad.GetState(PlayerIndex.One);
 
 
-			//Update the player
-			UpdatePlayer(gameTime);
+			player.Update(gameTime);
 
-			base.Update(gameTime);
+			// Update the parallaxing background
+			bgLayer1.Update();
+			bgLayer2.Update();
 		}
 
 		private void UpdatePlayer (GameTime gameTime)
@@ -107,7 +130,7 @@ namespace FirstGameDevProject.Controller
 
 			// Use the Keyboard / Dpad
 			if (currentKeyboardState.IsKeyDown(Keys.Left) ||
-			    currentGamePadState.DPad.Left == ButtonState.Pressed)
+				currentGamePadState.DPad.Left == ButtonState.Pressed)
 			{
 				player.Position.X -= playerMoveSpeed;
 			}
@@ -146,6 +169,12 @@ namespace FirstGameDevProject.Controller
 
 			// Start drawing
 			spriteBatch.Begin();
+
+			spriteBatch.Draw(mainBackground, Vector2.Zero, Color.White);
+
+			// Draw the moving background
+			bgLayer1.Draw(spriteBatch);
+			bgLayer2.Draw(spriteBatch);
 
 			// Draw the Player
 			player.Draw(spriteBatch);
