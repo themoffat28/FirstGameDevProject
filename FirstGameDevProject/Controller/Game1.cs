@@ -55,6 +55,11 @@ namespace FirstGameDevProject.Controller
 		Texture2D explosionTexture;
 		List<Animation> explosions;
 
+		//Number that holds the player score
+		int score;
+		// The font used to display UI elements
+		SpriteFont font;
+
 
 
 		public Game1 ()
@@ -99,6 +104,9 @@ namespace FirstGameDevProject.Controller
 
 			explosions = new List<Animation>();
 
+			//Set player's score to zero
+			score = 0;
+
 			base.Initialize();
 		}
 
@@ -126,6 +134,9 @@ namespace FirstGameDevProject.Controller
 			// Load the parallaxing background
 			bgLayer1.Initialize(Content, "Texture/bgLayer1", GraphicsDevice.Viewport.Width, -1);
 			bgLayer2.Initialize(Content, "Texture/bgLayer2", GraphicsDevice.Viewport.Width, -2);
+
+			// Load the score font
+			font = Content.Load<SpriteFont>("Font/gameFont");
 
 			enemyTexture = Content.Load<Texture2D>("Animation/mineAnimation");
 
@@ -225,6 +236,13 @@ namespace FirstGameDevProject.Controller
 			// Make sure that the player does not go out of bounds
 			player.Position.X = MathHelper.Clamp(player.Position.X, 0, GraphicsDevice.Viewport.Width - player.Width);
 			player.Position.Y = MathHelper.Clamp(player.Position.Y, 0, GraphicsDevice.Viewport.Height - player.Height);
+
+			// reset score if player health goes to zero
+			if (player.Health <= 0)
+			{
+				player.Health = 100;
+				score = 0;
+			}
 		}
 
 		private void AddEnemy ()
@@ -273,9 +291,13 @@ namespace FirstGameDevProject.Controller
 						AddExplosion(enemies[i].Position);
 					}
 					enemies.RemoveAt(i);
+					//Add to the player's score
+					score += enemies[i].Value;
 				}
 
 			}
+
+
 		}
 
 		private void UpdateCollision ()
@@ -421,6 +443,11 @@ namespace FirstGameDevProject.Controller
 			{
 				explosions[i].Draw(spriteBatch);
 			}
+
+			// Draw the score
+			spriteBatch.DrawString(font, "score: " + score, new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y), Color.White);
+			// Draw the player health
+			spriteBatch.DrawString(font, "health: " + player.Health, new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 30), Color.White);
 
 			// Stop drawing
 			spriteBatch.End();
