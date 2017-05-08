@@ -52,6 +52,10 @@ namespace FirstGameDevProject.Controller
 		TimeSpan fireTime;
 		TimeSpan previousFireTime;
 
+		Texture2D explosionTexture;
+		List<Animation> explosions;
+
+
 
 		public Game1 ()
 		{
@@ -93,6 +97,8 @@ namespace FirstGameDevProject.Controller
 			// Set the laser to fire every quarter second
 			fireTime = TimeSpan.FromSeconds(.15f);
 
+			explosions = new List<Animation>();
+
 			base.Initialize();
 		}
 
@@ -121,9 +127,11 @@ namespace FirstGameDevProject.Controller
 			bgLayer1.Initialize(Content, "Texture/bgLayer1", GraphicsDevice.Viewport.Width, -1);
 			bgLayer2.Initialize(Content, "Texture/bgLayer2", GraphicsDevice.Viewport.Width, -2);
 
-			enemyTexture = Content.Load<Texture2D>("mineAnimation");
+			enemyTexture = Content.Load<Texture2D>("Animation/mineAnimation");
 
 			projectileTexture = Content.Load<Texture2D>("Texture/laser");
+
+			explosionTexture = Content.Load<Texture2D>("Animation/explosion");
 
 			mainBackground = Content.Load<Texture2D>("Texture/mainbackground");
 
@@ -134,6 +142,7 @@ namespace FirstGameDevProject.Controller
 		/// checking for collisions, gathering input, and playing audio.
 		/// </summary>
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
+
 		protected override void Update (GameTime gameTime)
 		{
 			// For Mobile devices, this logic will close the Game when the Back button is pressed
@@ -168,6 +177,9 @@ namespace FirstGameDevProject.Controller
 
 			// Update the projectiles
 			UpdateProjectiles();
+
+			// Update the explosions
+			UpdateExplosions(gameTime);
 
 		}
 
@@ -254,6 +266,12 @@ namespace FirstGameDevProject.Controller
 
 				if (enemies[i].Active == false)
 				{
+					// If not active and health <= 0
+					if (enemies[i].Health <= 0)
+					{
+						// Add an explosion
+						AddExplosion(enemies[i].Position);
+					}
 					enemies.RemoveAt(i);
 				}
 
@@ -347,6 +365,25 @@ namespace FirstGameDevProject.Controller
 			}
 		}
 
+		private void AddExplosion (Vector2 position)
+		{
+			Animation explosion = new Animation();
+			explosion.Initialize(explosionTexture, position, 134, 134, 12, 45, Color.White, 1f, false);
+			explosions.Add(explosion);
+		}
+
+		private void UpdateExplosions (GameTime gameTime)
+		{
+			for (int i = explosions.Count - 1; i >= 0; i--)
+			{
+				explosions[i].Update(gameTime);
+				if (explosions[i].Active == false)
+				{
+					explosions.RemoveAt(i);
+				}
+			}
+		}
+
 		/// <summary>
 		/// This is called when the game should draw itself.
 		/// </summary>
@@ -378,6 +415,12 @@ namespace FirstGameDevProject.Controller
 
 			// Draw the Player
 			player.Draw(spriteBatch);
+
+			// Draw the explosions
+			for (int i = 0; i < explosions.Count; i++)
+			{
+				explosions[i].Draw(spriteBatch);
+			}
 
 			// Stop drawing
 			spriteBatch.End();
