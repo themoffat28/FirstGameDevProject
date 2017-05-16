@@ -39,3 +39,7 @@
 /Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Animation/mineAnimation.xnb
 /Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Animation/shipAnimation.xnb
 /Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Font/gameFont.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/FirstGameDevProject.pdb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/obj/x86/Debug/FirstGameDevProject.pdb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Texture/Ballistic Missile.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Texture/Demon.xnb

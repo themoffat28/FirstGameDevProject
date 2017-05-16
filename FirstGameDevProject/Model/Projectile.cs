@@ -1,6 +1,7 @@
 ﻿// Projectile.cs
 //Using declarations
 using System;
+using FirstGameDevProject.Controller;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -19,6 +20,8 @@ namespace FirstGameDevProject
 
 		// The amount of damage the projectile can inflict to an enemy
 		public int Damage;
+
+		public int weapon;
 
 		// Represents the viewable boundary of the game
 		Viewport viewport;
@@ -39,7 +42,7 @@ namespace FirstGameDevProject
 		float projectileMoveSpeed;
 
 
-		public void Initialize (Viewport viewport, Texture2D texture, Vector2 position)
+		public void Initialize (Viewport viewport, Texture2D texture, Vector2 position, int weapon)
 		{
 			Texture = texture;
 			Position = position;
@@ -47,9 +50,16 @@ namespace FirstGameDevProject
 
 			Active = true;
 
-			Damage = 2;
-
-			projectileMoveSpeed = 20f;
+			if (weapon == 1)
+			{
+				Damage = 2;
+				projectileMoveSpeed = 20f;
+			}
+			else
+			{
+				Damage = 10;
+				projectileMoveSpeed = 5f;
+			}
 		}
 
 		public void Update ()

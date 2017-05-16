@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using FirstGameDevProject.Model;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace FirstGameDevProject.Controller
 {
@@ -46,6 +48,7 @@ namespace FirstGameDevProject.Controller
 		Random random;
 
 		Texture2D projectileTexture;
+		Texture2D projectileTexture2;
 		List<Projectile> projectiles;
 
 		// The rate of fire of the player laser
@@ -55,8 +58,19 @@ namespace FirstGameDevProject.Controller
 		Texture2D explosionTexture;
 		List<Animation> explosions;
 
+		// The sound that is played when a laser is fired
+		private SoundEffect laserSound;
+
+		// The sound used when the player or an enemy dies
+		private SoundEffect explosionSound;
+
+		// The music played during gameplay
+		private Song gameplayMusic;
+
 		//Number that holds the player score
 		int score;
+
+		int weapon;
 		// The font used to display UI elements
 		SpriteFont font;
 
@@ -79,14 +93,20 @@ namespace FirstGameDevProject.Controller
 			// TODO: Add your initialization logic here
 			player = new Player();
 
-			// Set a constant player move speed
-			playerMoveSpeed = 8.0f;
+			projectiles = new List<Projectile>();
 
-			bgLayer1 = new ParallaxingBackground();
-			bgLayer2 = new ParallaxingBackground();
+			// Set the laser to fire every quarter second
+			fireTime = TimeSpan.FromSeconds(.15f);
+
+			explosions = new List<Animation>();
 
 			// Initialize the enemies list
 			enemies = new List<Enemy>();
+
+			//Set player's score to zero
+			score = 0;
+
+			weapon = 1;
 
 			// Set the time keepers to zero
 			previousSpawnTime = TimeSpan.Zero;
@@ -97,15 +117,11 @@ namespace FirstGameDevProject.Controller
 			// Initialize our random number generator
 			random = new Random();
 
-			projectiles = new List<Projectile>();
+			bgLayer1 = new ParallaxingBackground();
+			bgLayer2 = new ParallaxingBackground();
 
-			// Set the laser to fire every quarter second
-			fireTime = TimeSpan.FromSeconds(.15f);
-
-			explosions = new List<Animation>();
-
-			//Set player's score to zero
-			score = 0;
+			// Set a constant player move speed
+			playerMoveSpeed = 8.0f;
 
 			base.Initialize();
 		}
@@ -138,13 +154,24 @@ namespace FirstGameDevProject.Controller
 			// Load the score font
 			font = Content.Load<SpriteFont>("Font/gameFont");
 
-			enemyTexture = Content.Load<Texture2D>("Animation/mineAnimation");
+			enemyTexture = Content.Load<Texture2D>("Texture/Demon");
 
 			projectileTexture = Content.Load<Texture2D>("Texture/laser");
+			projectileTexture2 = Content.Load<Texture2D>("Texture/Ballistic Missile");
 
 			explosionTexture = Content.Load<Texture2D>("Animation/explosion");
 
 			mainBackground = Content.Load<Texture2D>("Texture/mainbackground");
+
+			// Load the music
+			gameplayMusic = Content.Load<Song>("Sound/gameMusic");
+
+			// Load the laser and explosion sound effect
+			laserSound = Content.Load<SoundEffect>("Sound/laserFire");
+			explosionSound = Content.Load<SoundEffect>("Sound/explosion");
+
+			// Start the music right away
+			PlayMusic(gameplayMusic);
 
 		}
 
@@ -222,6 +249,16 @@ namespace FirstGameDevProject.Controller
 			{
 				player.Position.Y += playerMoveSpeed;
 			}
+			if (currentKeyboardState.IsKeyDown(Keys.Z) ||
+			currentGamePadState.DPad.Down == ButtonState.Pressed)
+			{
+				this.weapon = 1;
+			}
+			if (currentKeyboardState.IsKeyDown(Keys.X) ||
+			currentGamePadState.DPad.Down == ButtonState.Pressed)
+			{
+				this.weapon = 2;
+			}
 
 			// Fire only every interval we set as the fireTime
 			if (gameTime.TotalGameTime - previousFireTime > fireTime)
@@ -243,6 +280,9 @@ namespace FirstGameDevProject.Controller
 				player.Health = 100;
 				score = 0;
 			}
+
+			// Play the laser sound
+			laserSound.Play();
 		}
 
 		private void AddEnemy ()
@@ -294,6 +334,9 @@ namespace FirstGameDevProject.Controller
 					//Add to the player's score
 					score += enemies[i].Value;
 				}
+
+				// Play the explosion sound
+				explosionSound.Play();
 
 			}
 
@@ -367,9 +410,20 @@ namespace FirstGameDevProject.Controller
 
 		private void AddProjectile (Vector2 position)
 		{
-			Projectile projectile = new Projectile();
-			projectile.Initialize(GraphicsDevice.Viewport, projectileTexture, position);
-			projectiles.Add(projectile);
+			if (this.weapon == 1)
+			{
+				Projectile projectile = new Projectile();
+				projectile.Initialize(GraphicsDevice.Viewport, projectileTexture, position, weapon);
+				projectiles.Add(projectile);
+				fireTime = TimeSpan.FromSeconds(.15f);
+			}
+			else if (this.weapon == 2)
+			{
+				Projectile projectile = new Projectile();
+				projectile.Initialize(GraphicsDevice.Viewport, projectileTexture2, position, weapon);
+				projectiles.Add(projectile);
+				fireTime = TimeSpan.FromSeconds(1f);
+			}
 		}
 
 		private void UpdateProjectiles ()
@@ -404,6 +458,21 @@ namespace FirstGameDevProject.Controller
 					explosions.RemoveAt(i);
 				}
 			}
+		}
+
+		private void PlayMusic (Song song)
+		{
+			// Due to the way the MediaPlayer plays music,
+			// we have to catch the exception. Music will play when the game is not tethered
+			try
+			{
+				// Play the music
+				MediaPlayer.Play(song);
+
+				// Loop the currently playing song
+				MediaPlayer.IsRepeating = true;
+			}
+			catch { } //No Exception is handled so it is an empty/anonymous exception
 		}
 
 		/// <summary>
@@ -449,6 +518,15 @@ namespace FirstGameDevProject.Controller
 			// Draw the player health
 			spriteBatch.DrawString(font, "health: " + player.Health, new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 30), Color.White);
 
+			//Draw selected weapon
+			if (this.weapon == 1)
+			{
+				spriteBatch.DrawString(font, "weapon: lazer", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 60), Color.White);
+			}
+			else
+			{
+				spriteBatch.DrawString(font, "weapon: missile", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 60), Color.White);
+			}
 			// Stop drawing
 			spriteBatch.End();
 
