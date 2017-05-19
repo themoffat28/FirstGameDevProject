@@ -48,8 +48,10 @@ namespace FirstGameDevProject.Controller
 		Random random;
 
 		Texture2D projectileTexture;
-		Texture2D projectileTexture2;
 		List<Projectile> projectiles;
+
+		Texture2D projectileTexture2;
+		List<Projectile2> projectiles2;
 
 		// The rate of fire of the player laser
 		TimeSpan fireTime;
@@ -94,6 +96,7 @@ namespace FirstGameDevProject.Controller
 			player = new Player();
 
 			projectiles = new List<Projectile>();
+			projectiles2 = new List<Projectile2>();
 
 			// Set the laser to fire every quarter second
 			fireTime = TimeSpan.FromSeconds(.15f);
@@ -216,6 +219,8 @@ namespace FirstGameDevProject.Controller
 			// Update the projectiles
 			UpdateProjectiles();
 
+			UpdateProjectiles2();
+
 			// Update the explosions
 			UpdateExplosions(gameTime);
 
@@ -291,7 +296,7 @@ namespace FirstGameDevProject.Controller
 			Animation enemyAnimation = new Animation();
 
 			// Initialize the animation with the correct animation information
-			enemyAnimation.Initialize(enemyTexture, Vector2.Zero, 47, 61, 8, 30, Color.White, 1f, true);
+			enemyAnimation.Initialize(enemyTexture, Vector2.Zero, 32, 32, 3, 80, Color.White, 3f, true);
 
 			// Randomly generate the position of the enemy
 			Vector2 position = new Vector2(GraphicsDevice.Viewport.Width + enemyTexture.Width / 2, random.Next(100, GraphicsDevice.Viewport.Height - 100));
@@ -330,13 +335,14 @@ namespace FirstGameDevProject.Controller
 						// Add an explosion
 						AddExplosion(enemies[i].Position);
 					}
-					enemies.RemoveAt(i);
+
 					//Add to the player's score
 					score += enemies[i].Value;
+					enemies.RemoveAt(i);
 				}
 
 				// Play the explosion sound
-				explosionSound.Play();
+				//explosionSound.Play();
 
 			}
 
@@ -406,6 +412,28 @@ namespace FirstGameDevProject.Controller
 					}
 				}
 			}
+
+			for (int i = 0; i<projectiles2.Count; i++)
+			{
+				for (int j = 0; j<enemies.Count; j++)
+				{
+					// Create the rectangles we need to determine if we collided with each other
+					rectangle1 = new Rectangle ((int)projectiles2[i].Position.X -
+					projectiles2[i].Width / 2, (int)projectiles2[i].Position.Y -
+					projectiles2[i].Height / 2, projectiles2[i].Width, projectiles2[i].Height);
+
+					rectangle2 = new Rectangle ((int)enemies[j].Position.X - enemies[j].Width / 2,
+					(int)enemies[j].Position.Y - enemies[j].Height / 2,
+					enemies[j].Width, enemies[j].Height);
+
+					// Determine if the two objects collided with each other
+					if (rectangle1.Intersects(rectangle2))
+					{
+						enemies[j].Health -= projectiles2[i].Damage;
+						projectiles2[i].Active = false;
+					}
+				}
+			}
 		}
 
 		private void AddProjectile (Vector2 position)
@@ -419,9 +447,11 @@ namespace FirstGameDevProject.Controller
 			}
 			else if (this.weapon == 2)
 			{
-				Projectile projectile = new Projectile();
-				projectile.Initialize(GraphicsDevice.Viewport, projectileTexture2, position, weapon);
-				projectiles.Add(projectile);
+				Animation projectileAnimation = new Animation();
+				projectileAnimation.Initialize(projectileTexture2, Vector2.Zero, 32, 32, 8, 50, Color.White, 1f, true);
+				Projectile2 projectile = new Projectile2();
+				projectile.Initialize(GraphicsDevice.Viewport, projectileAnimation, position);
+				projectiles2.Add(projectile);
 				fireTime = TimeSpan.FromSeconds(1f);
 			}
 		}
@@ -436,6 +466,21 @@ namespace FirstGameDevProject.Controller
 				if (projectiles[i].Active == false)
 				{
 					projectiles.RemoveAt(i);
+				}
+
+			}
+		}
+
+		private void UpdateProjectiles2 ()
+		{
+			// Update the Projectiles
+			for (int i = projectiles2.Count - 1; i >= 0; i--)
+			{
+				projectiles2[i].Update();
+
+				if (projectiles2[i].Active == false)
+				{
+					projectiles2.RemoveAt(i);
 				}
 
 			}
@@ -504,6 +549,12 @@ namespace FirstGameDevProject.Controller
 				projectiles[i].Draw(spriteBatch);
 			}
 
+			// Draw the Projectiles
+			for (int i = 0; i<projectiles2.Count; i++)
+			{
+				projectiles2[i].Draw(spriteBatch);
+			}
+
 			// Draw the Player
 			player.Draw(spriteBatch);
 
@@ -521,11 +572,11 @@ namespace FirstGameDevProject.Controller
 			//Draw selected weapon
 			if (this.weapon == 1)
 			{
-				spriteBatch.DrawString(font, "weapon: lazer", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 60), Color.White);
+				spriteBatch.DrawString(font, "weapon: Lazer", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 60), Color.White);
 			}
 			else
 			{
-				spriteBatch.DrawString(font, "weapon: missile", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 60), Color.White);
+				spriteBatch.DrawString(font, "weapon: Radiation", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 60), Color.White);
 			}
 			// Stop drawing
 			spriteBatch.End();

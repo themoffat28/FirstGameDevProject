@@ -43,3 +43,9 @@
 /Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/obj/x86/Debug/FirstGameDevProject.pdb
 /Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Texture/Ballistic Missile.xnb
 /Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Texture/Demon.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Sound/explosion.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Sound/gameMusic.ogg
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Sound/gameMusic.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Sound/laserFire.xnb
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Sound/menuMusic.ogg
+/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/bin/Debug/Content/Sound/menuMusic.xnb

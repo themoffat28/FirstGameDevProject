@@ -16,5 +16,11 @@
     <File>/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/Content/Animation/mineAnimation.png</File>
     <File>/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/Content/Animation/shipAnimation.png</File>
     <File>/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/Content/Font/gameFont.spritefont</File>
+    <File>/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/Content/Texture/Ballistic Missile.png</File>
+    <File>/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/Content/Texture/Demon.png</File>
+    <File>/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/Content/Sound/explosion.wav</File>
+    <File>/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/Content/Sound/gameMusic.mp3</File>
+    <File>/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/Content/Sound/laserFire.wav</File>
+    <File>/Users/bmof0507/Documents/GameDevProjects/FirstGameDevProject/FirstGameDevProject/Content/Sound/menuMusic.mp3</File>
   </SourceFiles>
 </SourceFileCollection>

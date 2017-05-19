@@ -1,16 +1,14 @@
-﻿// Projectile.cs
-//Using declarations
-using System;
+﻿using System;
 using FirstGameDevProject.Controller;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FirstGameDevProject
 {
-	public class Projectile
+	public class Projectile2
 	{
 		// Image representing the Projectile
-		public Texture2D Texture;
+		public Animation projectileAnimation;
 
 		// Position of the Projectile relative to the upper left side of the screen
 		public Vector2 Position;
@@ -29,37 +27,30 @@ namespace FirstGameDevProject
 		// Get the width of the projectile ship
 		public int Width
 		{
-			get { return Texture.Width; }
+			get { return projectileAnimation.FrameWidth; }
 		}
 
 		// Get the height of the projectile ship
 		public int Height
 		{
-			get { return Texture.Height; }
+			get { return projectileAnimation.FrameHeight; }
 		}
 
 		// Determines how fast the projectile moves
 		float projectileMoveSpeed;
 
 
-		public void Initialize (Viewport viewport, Texture2D texture, Vector2 position, int weapon)
+		public void Initialize (Viewport viewport, Animation animation, Vector2 position)
 		{
-			Texture = texture;
+			projectileAnimation = animation;
 			Position = position;
 			this.viewport = viewport;
 
 			Active = true;
 
-			if (weapon == 1)
-			{
-				Damage = 2;
-				projectileMoveSpeed = 20f;
-			}
-			else
-			{
+
 				Damage = 10;
 				projectileMoveSpeed = 5f;
-			}
 		}
 
 		public void Update ()
@@ -68,14 +59,13 @@ namespace FirstGameDevProject
 			Position.X += projectileMoveSpeed;
 
 			// Deactivate the bullet if it goes out of screen
-			if (Position.X + Texture.Width / 2 > viewport.Width)
+			if (Position.X + projectileAnimation.FrameWidth / 2 > viewport.Width)
 				Active = false;
 		}
 
 		public void Draw (SpriteBatch spriteBatch)
 		{
-			spriteBatch.Draw(Texture, Position, null, Color.White, 0f,
-			new Vector2(Width / 2, Height / 2), 1f, SpriteEffects.None, 0f);
+			projectileAnimation.Draw(spriteBatch);
 		}
 
 	}
